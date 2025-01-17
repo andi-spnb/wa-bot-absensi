@@ -1,0 +1,82 @@
+<!-- views/apikeys/create.ejs -->
+<div class="max-w-2xl mx-auto">
+  <div class="space-y-6">
+      <!-- Header -->
+      <div>
+          <h1 class="text-2xl font-semibold text-gray-900">Tambah API Key Baru</h1>
+          <p class="mt-1 text-sm text-gray-600">Buat API key baru untuk integrasi dengan sistem eksternal</p>
+      </div>
+
+      <!-- Form -->
+      <div class="bg-white shadow rounded-lg">
+          <form action="/api-keys/create" method="POST" class="p-6 space-y-6">
+              <div>
+                  <label for="key_name" class="block text-sm font-medium text-gray-700">Nama API Key</label>
+                  <div class="mt-1">
+                      <input type="text" 
+                             name="key_name" 
+                             id="key_name" 
+                             required
+                             class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                             placeholder="Contoh: Sistem Absensi"
+                             value="<%= typeof key_name !== 'undefined' ? key_name : '' %>">
+                  </div>
+                  <p class="mt-2 text-sm text-gray-500">
+                      Berikan nama yang deskriptif untuk memudahkan identifikasi penggunaan API key
+                  </p>
+              </div>
+
+              <!-- Error Message -->
+              <% if (typeof error !== 'undefined' && error) { %>
+                  <div class="rounded-md bg-red-50 p-4">
+                      <div class="flex">
+                          <div class="flex-shrink-0">
+                              <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                              </svg>
+                          </div>
+                          <div class="ml-3">
+                              <h3 class="text-sm font-medium text-red-800"><%= error %></h3>
+                          </div>
+                      </div>
+                  </div>
+              <% } %>
+
+              <!-- Buttons -->
+              <div class="flex items-center justify-end space-x-4">
+                  <a href="/api-keys" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                      Batal
+                  </a>
+                  <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                      </svg>
+                      Buat API Key
+                  </button>
+              </div>
+          </form>
+      </div>
+
+      <!-- Info Card -->
+      <div class="rounded-md bg-blue-50 p-4">
+          <div class="flex">
+              <div class="flex-shrink-0">
+                  <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+              </div>
+              <div class="ml-3">
+                  <h3 class="text-sm font-medium text-blue-800">Informasi Penting</h3>
+                  <div class="mt-2 text-sm text-blue-700">
+                      <ul class="list-disc pl-5 space-y-1">
+                          <li>API key akan digenerate secara otomatis</li>
+                          <li>Simpan API key di tempat yang aman</li>
+                          <li>API key tidak dapat dilihat kembali setelah dibuat</li>
+                          <li>Jika API key terekspos, segera nonaktifkan dan buat yang baru</li>
+                      </ul>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>

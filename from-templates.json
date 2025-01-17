@@ -1,0 +1,18 @@
+*NOTIFIKASI KETERLAMBATAN*
+
+Yth. Bapak/Ibu Wali Murid,
+Dengan ini kami informasikan bahwa:
+
+Nama: {{nama}}
+Kelas: {{kelas}}
+Waktu Keterlambatan: {{waktu}}
+
+Mohon perhatian dan bimbingan dari Bapak/Ibu untuk meningkatkan kedisiplinan putra/putri tercinta.
+
+Terima kasih.
+
+{
+  "nama": "string",
+  "kelas": "string",
+  "waktu": "string"
+}

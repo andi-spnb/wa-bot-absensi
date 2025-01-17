@@ -1,0 +1,164 @@
+<!-- views/commands/form.ejs -->
+<div class="max-w-3xl mx-auto">
+    <div class="space-y-6">
+        <!-- Header -->
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-semibold text-gray-900">
+                    <%= typeof command !== 'undefined' && command ? 'Edit Command' : 'Tambah Command Baru' %>
+                </h1>
+                <p class="mt-1 text-sm text-gray-600">
+                    <%= typeof command !== 'undefined' && command ? 'Perbarui command yang sudah ada' : 'Buat command baru untuk WhatsApp bot' %>
+                </p>
+            </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="bg-white shadow rounded-lg">
+            <form action="<%= typeof command !== 'undefined' && command ? `/commands/${command.id}` : '/commands' %>" 
+                  method="POST" 
+                  class="space-y-6 p-6">
+                <!-- Error Message -->
+                <% if (typeof error !== 'undefined' && error) { %>
+                    <div class="rounded-md bg-red-50 p-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-red-800"><%= error %></p>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+
+                <!-- Command Input -->
+                <div>
+                    <label for="command" class="block text-sm font-medium text-gray-700">Command</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">!</span>
+                        </div>
+                        <input type="text" 
+                               name="command" 
+                               id="command" 
+                               required
+                               class="block w-full pl-7 pr-12 sm:text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                               value="<%= typeof command !== 'undefined' && command ? command.command.replace('!', '') : '' %>"
+                               placeholder="Contoh: help, status, info">
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500">Command akan otomatis diawali dengan tanda "!"</p>
+                </div>
+
+                <!-- Response Input -->
+                <div>
+                    <label for="response" class="block text-sm font-medium text-gray-700">
+                        Response
+                        <span class="text-gray-400">(Mendukung format WhatsApp)</span>
+                    </label>
+                    <div class="mt-1">
+                        <textarea name="response" 
+                                  id="response" 
+                                  rows="8" 
+                                  required
+                                  class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border border-gray-300 rounded-md font-mono"
+                                  placeholder="*JUDUL PESAN*
+
+Tulis response command di sini.
+Gunakan format:
+*teks* untuk bold
+_teks_ untuk italic"><%= typeof command !== 'undefined' && command ? command.response : '' %></textarea>
+                    </div>
+                </div>
+
+                <!-- Preview -->
+                <div class="rounded-lg border border-gray-200">
+                    <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                        <h3 class="text-sm font-medium text-gray-900">Preview Response</h3>
+                    </div>
+                    <div class="p-4 bg-white rounded-b-lg">
+                        <div id="preview" class="text-sm text-gray-700 whitespace-pre-wrap font-mono"></div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex items-center justify-end space-x-4 pt-4">
+                    <a href="/commands" 
+                       class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Batal
+                    </a>
+                    <button type="submit" 
+                            class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <%= typeof command !== 'undefined' && command ? 'Update Command' : 'Buat Command' %>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tips Card -->
+        <div class="rounded-md bg-blue-50 p-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-blue-800">Tips Format WhatsApp</h3>
+                    <div class="mt-2 text-sm text-blue-700">
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>Gunakan *teks* untuk membuat teks tebal</li>
+                            <li>Gunakan _teks_ untuk membuat teks miring</li>
+                            <li>Gunakan enter dua kali untuk membuat baris baru</li>
+                            <li>Command harus unik dan belum digunakan</li>
+                            <li>Response akan dikirim persis seperti yang ditulis</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Live Preview
+const responseInput = document.getElementById('response');
+const preview = document.getElementById('preview');
+
+function updatePreview() {
+    preview.textContent = responseInput.value;
+}
+
+responseInput.addEventListener('input', updatePreview);
+
+// Initial preview
+document.addEventListener('DOMContentLoaded', updatePreview);
+
+// Command validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    const command = document.getElementById('command').value.trim();
+    const response = document.getElementById('response').value.trim();
+
+    if (!command || !response) {
+        e.preventDefault();
+        alert('Command dan response harus diisi');
+        return;
+    }
+
+    if (command.includes(' ')) {
+        e.preventDefault();
+        alert('Command tidak boleh mengandung spasi');
+        return;
+    }
+
+    if (command.startsWith('!')) {
+        e.preventDefault();
+        alert('Jangan tambahkan tanda "!" di awal command');
+        return;
+    }
+});
+</script>

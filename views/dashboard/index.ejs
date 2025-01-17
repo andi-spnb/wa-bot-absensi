@@ -1,0 +1,149 @@
+<!-- views/dashboard/index.ejs -->
+<div class="space-y-6">
+    <!-- Judul -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-semibold text-gray-900">Dashboard</h1>
+        <p class="mt-1 text-sm text-gray-600">Selamat datang di panel admin WA Bot Absensi</p>
+    </div>
+
+    <!-- Statistik Card -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Total Notifikasi -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Total Notifikasi</p>
+                    <p class="text-2xl font-semibold text-gray-900 mt-2"><%= stats.total %></p>
+                </div>
+                <div class="bg-blue-50 p-3 rounded-full">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sukses -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Berhasil</p>
+                    <p class="text-2xl font-semibold text-gray-900 mt-2"><%= stats.success %></p>
+                </div>
+                <div class="bg-green-50 p-3 rounded-full">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gagal -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Gagal</p>
+                    <p class="text-2xl font-semibold text-gray-900 mt-2"><%= stats.failed %></p>
+                </div>
+                <div class="bg-red-50 p-3 rounded-full">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grafik dan Log -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Grafik -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Statistik Notifikasi</h3>
+            <div style="height: 300px; position: relative;">
+                <canvas id="statsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Log Terbaru -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Log Terbaru</h3>
+            <div class="space-y-4">
+                <% recentLogs.forEach(function(log) { %>
+                <div class="flex items-start space-x-4 p-3 hover:bg-gray-50 rounded-lg">
+                    <div class="p-2 rounded-full <%= log.status === 'success' ? 'bg-green-100' : 'bg-red-100' %>">
+                        <% if (log.status === 'success') { %>
+                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        <% } else { %>
+                            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        <% } %>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900"><%= log.phone %></p>
+                        <p class="text-sm text-gray-500"><%= log.message %></p>
+                        <p class="text-xs text-gray-400 mt-1">
+                            <%= moment(log.created_at).format('DD/MM/YYYY HH:mm:ss') %>
+                        </p>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script untuk Chart -->
+ <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('statsChart').getContext('2d');
+    
+    // Data statis untuk contoh
+    const chartData = {
+        labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
+        datasets: [{
+            label: 'Berhasil',
+            data: [30, 45, 25, 60, 35, 40, 50],
+            borderColor: '#10B981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4,
+            fill: true
+        }, {
+            label: 'Gagal',
+            data: [5, 8, 3, 10, 7, 5, 8],
+            borderColor: '#EF4444',
+            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    };
+
+    new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Notifikasi per Hari'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 10
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
